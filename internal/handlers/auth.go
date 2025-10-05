@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"myapp-backend/internal/database"
 	"myapp-backend/internal/models"
@@ -27,6 +28,7 @@ func SignUpHandler(w http.ResponseWriter, r * http.Request) {
 	}
 
 	user := models.User{
+		ID:       uuid.New(),
 		Username: input.Username,
 		Password: string(hashedPassword),
 	}
@@ -36,11 +38,11 @@ func SignUpHandler(w http.ResponseWriter, r * http.Request) {
 		return
 	}
 
-	w.Header().Set("Cotent-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"message":"signup success",
 		"user":map[string]interface{}{
-			"id":user.ID,
+			"id":user.ID.String(),
 			"username":user.Username,
 		},
 	})
