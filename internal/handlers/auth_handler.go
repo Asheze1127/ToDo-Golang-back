@@ -7,7 +7,7 @@ import (
 )
 
 type AuthHandler struct {
-	service *service.AuthService
+	AuthService *service.AuthService
 }
 
 func NewAuthHandler(authService *service.AuthService)*AuthHandler{
@@ -25,7 +25,7 @@ func (h *AuthHandler) SighUp(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	user, err := h.AuthService.SignUp(input.Username, input.Password)
+	token, err := h.AuthService.SignUp(input.Username, input.Password)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -36,9 +36,6 @@ func (h *AuthHandler) SighUp(w http.ResponseWriter, r *http.Request){
 
 	json.NewEncoder(w).Encode(map[string]any{
 		"message":"signup success",
-		"user":map[string]any{
-			"id":user.ID.String(),
-			"username":user.Username,
-		}
+		"token":token,
 	})
 }

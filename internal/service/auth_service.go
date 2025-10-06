@@ -1,12 +1,10 @@
 package service
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"myapp-backend/internal/infrastructure/db"
 	"myapp-backend/internal/models"
+	"myapp-backend/internal/util"
 )
 
 type AuthService struct {
@@ -17,20 +15,25 @@ func NewAuthService(repo db.UserRepository)*AuthService{
 	return &AuthService{UserRepo: repo}
 }
 
-func (s *AuthService) SignUp(username, password string) (*models.User, error){
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func (s *AuthService) SignUp(username, password string) (string, error){
+	hashedPassword, err := util.HashPassword(password)
 	if err != nil {
-		return nil, errors.New("failed to hash password")
+		return "", err
 	}
 
 	user := &models.User{
 		ID: uuid.New(),
 		Username: username,
-		Password: string(hashedPassword),
+		Password: hashedPassword,
 	}
 	if err := s.UserRepo.CreateUser(user); err != nil{
-		return nil, err
+		return "", err
 	}
 
-	return user, nil
+	token, err := util.GenerateJWT(user.ID.String())
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
