@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,8 +12,13 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	database.Connect()
-	database.DB.AutoMigrate(&models.User{})
+	if err := database.DB.AutoMigrate(&models.User{}); err != nil {
+		log.Fatalf("❌ Migration failed: %v", err)
+	}
+	log.Println("✅ Migration complete")
 
 	r := chi.NewRouter()
 	r.Post("/signup", handlers.SignUpHandler)
@@ -21,5 +27,7 @@ func main() {
 	})
 
 	fmt.Println("🚀 Server started on :8080")
-	http.ListenAndServe(":8080", r)
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		log.Fatalf("❌ Server failed: %v", err)
+	}
 }
