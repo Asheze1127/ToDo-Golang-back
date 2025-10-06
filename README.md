@@ -90,3 +90,11 @@ myapp-backend/
 ├── go.mod
 └── go.sum
 """
+
+## 学習メモ
+
+Handler（プレゼン層）        ← 外からのリクエストを受ける
+       ↓
+Service / Usecase層        ← ビジネスロジック（何をするか）
+       ↓
+Infrastructure層           ← DBやAPIなど外部と通信する
