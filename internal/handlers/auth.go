@@ -76,3 +76,10 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	authHandler := NewAuthHandler(authService)
 	authHandler.SignUp(w, r)
 }
+
+func SignIn(w http.ResponseWriter, r *http.Request) {
+	userRepo := db.NewGormUserRepository(db.DB)
+	authService := service.NewAuthService(userRepo)
+	authHandler := NewAuthHandler(authService)
+	authHandler.SignIn(w, r)
+}

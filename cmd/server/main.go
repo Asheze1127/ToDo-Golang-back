@@ -27,6 +27,7 @@ func main() {
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
 	})
+	r.Post("/signin", handlers.SignIn)
 
 	fmt.Println("🚀 Server started on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
