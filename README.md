@@ -68,6 +68,17 @@ r.Route("/users", func(r chi.Router) {
     r.Get("/{userID}/statistics", getUserStatisticsHandler)
 })
 
+## 🔐 JWTミドルウェアの使い方
+
+```go
+import "myapp-backend/internal/middleware"
+
+// ...
+r.With(middleware.JWTAuth).Get("/me", meHandler)
+```
+
+`Authorization: Bearer <token>` ヘッダー付きのリクエストだけが通過し、ミドルウェア内部で検証済みの `userID` をコンテキストに詰めています。ハンドラー側では `middleware.UserIDFromContext(r.Context())` で取り出せます。
+
 """
 myapp-backend/
 ├── cmd/

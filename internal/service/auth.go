@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/google/uuid"
-	"myapp-backend/internal/infrastructure/db"
+	"myapp-backend/internal/infra/db"
 	"myapp-backend/internal/models"
 	"myapp-backend/internal/util"
 )
@@ -26,7 +26,7 @@ func (s *AuthService) SignUp(username, password string) (string, error){
 		Username: username,
 		Password: hashedPassword,
 	}
-	if err := s.UserRepo.CreateUser(user); err != nil{
+	if err := s.UserRepo.Create(user); err != nil{
 		return "", err
 	}
 
