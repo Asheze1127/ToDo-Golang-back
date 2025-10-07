@@ -2,23 +2,34 @@ package db
 
 import (
 	"myapp-backend/internal/models"
+
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
 	Create(user *models.User) error
+	FindByUsername(username string) (*models.User, error)
 }
 
 type GormUserRepository struct {
 	db *gorm.DB
 }
 
-func NewGormUserRepository(db *gorm.DB)*GormUserRepository{
+func NewGormUserRepository(db *gorm.DB) *GormUserRepository {
 	return &GormUserRepository{db: db}
 }
 
 func (r *GormUserRepository) Create(user *models.User) error {
 	return r.db.Create(user).Error
+}
+
+func (r *GormUserRepository) FindByUsername(username string) (*models.User, error) {
+	var user models.User
+	err := r.db.Where("username = ?", username).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
 
 // type UserRepository struct{
