@@ -1,30 +1,33 @@
-package main 
+package main
 
 import (
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"myapp-backend/internal/database"
-	"myapp-backend/internal/models"
 	"myapp-backend/internal/handlers"
+	"myapp-backend/internal/infra/db"
+	"myapp-backend/internal/models"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	_ = godotenv.Load()
 
-	database.Connect()
-	if err := database.DB.AutoMigrate(&models.User{}); err != nil {
+	db.Connect()
+	if err := db.DB.AutoMigrate(&models.User{}); err != nil {
 		log.Fatalf("❌ Migration failed: %v", err)
 	}
 	log.Println("✅ Migration complete")
 
 	r := chi.NewRouter()
-	r.Post("/signup", handlers.SignUpHandler)
+	r.Post("/signup", handlers.SignUp)
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
 	})
+	r.Post("/signin", handlers.SignIn)
 
 	fmt.Println("🚀 Server started on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
