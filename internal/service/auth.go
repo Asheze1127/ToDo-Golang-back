@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"myapp-backend/internal/infra/db"
 	"myapp-backend/internal/models"
@@ -31,6 +33,25 @@ func (s *AuthService) SignUp(username, password string) (string, error){
 	}
 
 	token, err := util.GenerateJWT(user.ID.String())
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (s *AuthService) SignIn(username,password string)(string,error){
+	user, err := s.UserRepo.FindByUsername(username)
+	if err != nil{
+		return "" , errors.New("invalid credentials")
+	}
+
+	if !util.CheckPasswordHash(password, user.Password) {
+		return "", errors.New("invalid credentials")
+	}
+
+	token, err := util.GenerateJWT(user.ID.String())
+
 	if err != nil {
 		return "", err
 	}
