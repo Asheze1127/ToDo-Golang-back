@@ -5,12 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"myapp-backend/internal/handlers"
-	"myapp-backend/internal/infra/db"
-	"myapp-backend/internal/models"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
+	"myapp-backend/internal/handlers"
+	"myapp-backend/internal/infra/db"
+	"myapp-backend/internal/middleware"
+	"myapp-backend/internal/models"
 )
 
 func main() {
@@ -23,6 +23,7 @@ func main() {
 	log.Println("✅ Migration complete")
 
 	r := chi.NewRouter()
+	r.Use(middleware.CORS)
 	r.Post("/signup", handlers.SignUp)
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("pong"))
